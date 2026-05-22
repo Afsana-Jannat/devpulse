@@ -111,7 +111,6 @@ class IssueService {
             created_at: issue.created_at,
             updated_at: issue.updated_at
         }));
-
         return final;
     }
 
