@@ -1,14 +1,17 @@
-import { neon } from "@neondatabase/serverless"
+import { Pool } from "pg"
 import config from "../config"
 
-export const sql = neon(config.database_url)
+export const pool = new Pool({
+    connectionString: config.database_url,
+})
 
 export const initDB = async () => {
-    await sql`
+    await pool.query(`
     CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(75) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
+    password TEXT NOT NULL,
     role VARCHAR(20)
     CHECK(role IN('contributor','maintainer'))
     DEFAULT 'contributor',
@@ -16,9 +19,9 @@ export const initDB = async () => {
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-    `
+    `)
 
-    await sql`
+    await pool.query(`
     CREATE TABLE IF NOT EXISTS issues(
     id SERIAL PRIMARY KEY,
     title VARCHAR(150) NOT NULL,
@@ -31,11 +34,11 @@ export const initDB = async () => {
     CHECK(status IN('open', 'in_progress', 'resolved'))
     DEFAULT 'open',
 
-    reporter_id INTEGER NOT NULL,
+    reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-    `
+    `)
     console.log("Database connected");
 }
