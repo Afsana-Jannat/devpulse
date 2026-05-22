@@ -34,11 +34,29 @@ export const initDB = async () => {
     CHECK(status IN('open', 'in_progress', 'resolved'))
     DEFAULT 'open',
 
-    reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    reporter_id INTEGER NOT NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     `)
-    console.log("Database connected");
+    // console.log("Database connected");
+    await pool.query(`
+    CREATE OR REPLACE FUNCTION update_timestamp()
+    RETURNS TRIGGER AS $$
+    BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+    `);
+
+    await pool.query(`
+    DROP TRIGGER IF EXISTS issues_updated_at ON issues;
+
+   CREATE TRIGGER issues_updated_at
+   BEFORE UPDATE ON issues
+   FOR EACH ROW
+   EXECUTE FUNCTION update_timestamp();
+   `);
 }

@@ -1,6 +1,6 @@
 
 import { pool } from "../../db";
-import type { RUser } from "../../types";
+import type { RUser, User } from "../../types";
 import bcrypt from "bcrypt"
 
 class AuthService {
@@ -18,7 +18,30 @@ class AuthService {
         );
         return res.rows[0];
     }
-}
 
+    async validateUser(email: string, password: string) {
+        const res = await pool.query(
+            `SELECT id, name, email, password, role, created_at, updated_at FROM users WHERE email = $1`,
+            [email]
+        );
+
+        if (!res.rows.length) {
+            return null;
+        }
+
+        const dbUser = res.rows[0];
+
+        const isValid = await bcrypt.compare(
+            password,
+            dbUser.password
+        );
+
+        if (!isValid) {
+            return null;
+        }
+        const { password: _, ...user } = dbUser
+        return user;
+    }
+}
 
 export default new AuthService();
