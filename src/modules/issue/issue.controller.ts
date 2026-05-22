@@ -43,3 +43,31 @@ export const updateIssue = async (req: Request, res: Response) => {
         data: result
     });
 };
+
+export const getIssues = async (req: Request, res: Response) => {
+    const issues = await issueService.getIssues(req.query);
+
+    return sendResponse(res, {
+        message: "Issues fetched successfully",
+        data: issues
+    });
+};
+
+export const getIssueById = async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+
+    const issue = await issueService.getIssueById(id);
+
+    if (!issue) {
+        return sendResponse(res, {
+            success: false,
+            message: "Issue not found",
+            errors: "Invalid issue id"
+        }, 404);
+    }
+
+    return sendResponse(res, {
+        message: "Issue fetched successfully",
+        data: issue
+    });
+};

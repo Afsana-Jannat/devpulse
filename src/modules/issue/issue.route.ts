@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { createIssue, deleteIssue, updateIssue } from "./issue.controller";
+import { createIssue, deleteIssue, getIssueById, getIssues, updateIssue } from "./issue.controller";
 import { auth } from "../../middleware/auth";
 import { roleGuard } from "../../middleware/role";
 
 const router = Router();
+
+router.get("/", getIssues)
+router.get("/:id", getIssueById)
 
 router.post("/", auth, createIssue);
 
