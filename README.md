@@ -2,7 +2,7 @@
 
 ## Live URL
 
-link
+[link](https://dev-pulse-pink.vercel.app/)
 
 ## Features
 

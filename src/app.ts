@@ -11,7 +11,7 @@ const app: Application = express();
 app.use(express.json())
 
 app.get("/", (req: Request, res: Response) => {
-    res.send("hlw")
+    res.send("server is running")
 
 })
 app.use("/api/auth", authRoutes);
