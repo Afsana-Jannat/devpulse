@@ -1,7 +1,7 @@
 
-      import { createRequire } from 'module';
-      const require = createRequire(import.meta.url);
-    
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 
 // src/app.ts
 import express from "express";
@@ -503,7 +503,7 @@ var issue_route_default = router2;
 var app = express();
 app.use(express.json());
 app.get("/", (req, res) => {
-  res.send("hlw");
+  res.send("server is running");
 });
 app.use("/api/auth", auth_route_default);
 app.use("/api/issues", issue_route_default);
