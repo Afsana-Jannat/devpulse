@@ -56,7 +56,6 @@ export const deleteIssue = async (
     }
 
     await issueService.deleteIssue(id);
-
     return sendResponse(
         res,
         {
