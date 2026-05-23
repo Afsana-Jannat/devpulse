@@ -145,6 +145,32 @@ class IssueService {
             updated_at: issue.updated_at
         };
     }
+
+    async getIssueByIdRaw(id: number) {
+        const res = await pool.query(
+            `SELECT * FROM issues WHERE id = $1`,
+            [id]
+        );
+        return res.rows[0];
+    }
+
+    async updateIssueUser(id: number, data: any) {
+        const { title, description, type } = data;
+
+        const result = await pool.query(
+            `UPDATE issues
+             SET title = $1,
+                 description = $2,
+                 type = $3,
+                 status = 'in_progress',
+                 updated_at = NOW()
+             WHERE id = $4
+             RETURNING *`,
+            [title, description, type, id]
+        );
+
+        return result.rows[0];
+    }
 }
 
 export default new IssueService();
